@@ -13,7 +13,6 @@ preview images and embeds of profiles, posts and articles, rendered from supplie
   request (the app calls this package).
 - **Uses:** `unset-sh/brand` as `@unset-sh/brand` at an exact version. **Used by:** `Undefined6799/unset`, after its
   rewrite.
-
 - **Licence:** everything written for unset.sh is AGPL-3.0-only; work we use from others keeps its own licence. No
   licence file yet.
 
