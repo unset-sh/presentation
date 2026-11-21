@@ -101,7 +101,11 @@ A handle comes without its at sign.
 - **Fitting is the toolkit's job.** A long name shrinks, then wraps, then is cut with an ellipsis. Other long
   text is cut after its lines. A missing picture becomes the person's initials. A missing bio leaves no gap.
 - **Allowing is the app's job.** If a field should not appear, the app leaves it out.
-- **Plain text only.** Line breaks, control characters and direction overrides are removed from every field.
+- **Plain text only.** Line breaks, control characters, direction overrides and characters with no shape of
+  their own (zero-width spaces and the like) are removed from every field.
+- **Whole letters or no image.** Every letter is drawn whole, from one font. Text with a character no font
+  holds, or with an accent that has no single character together with its letter, returns `text-not-covered`.
+  It is never drawn with an empty box or with an accent beside its letter.
 
 ## The gallery
 
@@ -129,6 +133,7 @@ src/
 ├── templates/          profile, post, article: one file each, plus the frame they share
 ├── layout/             the small tree a template returns, and the initials for the letter avatar
 ├── brand.ts            the only file that reads @unset-sh/brand
+├── fonts.ts            every font file, and the order each kind of text tries them in
 └── render.ts           the only file that talks to the renderer
 ```
 
@@ -138,7 +143,9 @@ about the renderer. [`render.ts`](src/render.ts) draws that tree with [Takumi](h
 
 `npm run check` runs the type check, the linter, the build and the tests. Among the tests,
 [`tests/boundaries.test.ts`](tests/boundaries.test.ts) holds the structure in place: only `render.ts` imports
-the renderer, only `brand.ts` reads the brand package, and no colour is written anywhere in the source.
+the renderer, only `brand.ts` reads the brand package, only `fonts.ts` reads a font package, and no colour is
+written anywhere in the source. [`tests/coverage.test.ts`](tests/coverage.test.ts) draws every character one at
+a time and fails if one is drawn as an empty box without being reported.
 
 ## Add a template
 
@@ -158,10 +165,11 @@ a commit instead of a released version.
 
 ## Not here yet
 
-- **Text beyond Latin.** The brand fonts cover Latin and Latin Extended-A. A name, bio or post with an emoji or
-  with Greek, Cyrillic, Vietnamese, Arabic, Hebrew or East Asian text returns `text-not-covered` today. The
-  renderer draws all of these correctly once it is given fonts for them; which scripts to cover, and where those
-  fonts live, is an open decision.
+- **Text beyond Latin.** Latin text is drawn in the brand's two typefaces, Vietnamese included. A name, bio or
+  post with an emoji or with Greek, Cyrillic, Arabic, Hebrew or East Asian text returns `text-not-covered` today.
+- **The whole typefaces in the brand package.** The design sheet ships Space Grotesk with Western European
+  letters only, so [`src/fonts.ts`](src/fonts.ts) takes the other slices of the same build from the Fontsource
+  packages. They belong in `@unset-sh/brand`, and move there when the sheet ships them.
 - **The brand package from the registry.** `@unset-sh/brand` has no release yet, so it is pinned to a commit of
   its repository. It moves to an exact released version before the first release here.
 - **The same bytes on every machine.** Drawings are compared byte for byte on Linux x64, where CI runs. Other

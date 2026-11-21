@@ -30,13 +30,21 @@ test("only brand.ts reads the brand package", () => {
   );
 });
 
-test("only brand.ts and index.ts read files, and render.ts only hashes", () => {
+test("only fonts.ts reads the font packages", () => {
+  assert.deepEqual(
+    source.filter((path) => read(path).includes("@fontsource")),
+    ["src/fonts.ts"],
+  );
+});
+
+test("only brand.ts, fonts.ts and index.ts read files, and render.ts only hashes", () => {
   const nodeModules = (path: string) => imports(path).filter((specifier) => specifier.startsWith("node:"));
   assert.deepEqual(
     importers((specifier) => specifier.startsWith("node:")),
-    ["src/brand.ts", "src/index.ts", "src/render.ts"],
+    ["src/brand.ts", "src/fonts.ts", "src/index.ts", "src/render.ts"],
   );
   assert.deepEqual(nodeModules("src/brand.ts"), ["node:fs"]);
+  assert.deepEqual(nodeModules("src/fonts.ts"), ["node:fs"]);
   assert.deepEqual(nodeModules("src/index.ts"), ["node:fs"]);
   assert.deepEqual(nodeModules("src/render.ts"), ["node:crypto"]);
 });

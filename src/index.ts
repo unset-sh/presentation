@@ -1,11 +1,11 @@
 // @unset-sh/presentation: supplied data in, a preview image out. This is the only public entry.
 
 import { readFileSync } from "node:fs";
-import { fonts } from "./brand.ts";
 import { HEIGHT, LIMITS, WIDTH } from "./contract/limits.ts";
 import { type ParsedPreview, parseInput } from "./contract/parse.ts";
 import type { CheckedPicture } from "./contract/picture.ts";
 import type { PreviewInput, RenderOptions, RenderResult, Theme } from "./contract/types.ts";
+import { fonts } from "./fonts.ts";
 import { draw, inspectPicture } from "./render.ts";
 import { compose } from "./templates/compose.ts";
 

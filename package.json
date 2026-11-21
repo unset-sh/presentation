@@ -34,6 +34,8 @@
     "gallery:update": "node gallery/build.ts --update"
   },
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/space-grotesk": "5.3.0",
     "@takumi-rs/core": "2.22.1",
     "@unset-sh/brand": "github:unset-sh/brand#6f1d3efa48c7d5b384201c1c10af1c8349254a4c"
   },

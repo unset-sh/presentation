@@ -107,6 +107,27 @@ export const cases: Case[] = [
         "An excerpt that also keeps going, sentence after sentence, long after the two lines it has been given have run out and the reader has moved on.",
     },
   },
+  // Letters the brand's own font files lack: Polish, Czech, Turkish, Hungarian, Romanian and Vietnamese.
+  {
+    id: "profile-accents",
+    input: {
+      kind: "profile",
+      name: "Łucja Šťastná-Nguyễn",
+      handle: "lucja.example",
+      eyebrow: "Podróże · Du lịch",
+      bio: "Książki, kawa i długie spacery. Čeština, Türkçe (ğ ş ı İ), magyar (ő ű), română (ș ț) và tiếng Việt.",
+    },
+  },
+  {
+    id: "article-accents",
+    input: {
+      kind: "article",
+      author: { name: "Đặng Thị Hồng Ánh" },
+      title: "Żółta łódź płynie przez Hồ Chí Minh",
+      excerpt: "Příliš žluťoučký kůň úpěl ďábelské ódy. Pijamalı hasta yağız şoföre çabucak güvendi.",
+      label: "Podróże · Du lịch",
+    },
+  },
   // One unbroken word, accents, and a name of one letter.
   {
     id: "post-unbroken",

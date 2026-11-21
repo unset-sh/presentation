@@ -79,6 +79,7 @@ if (!Number.isFinite(markWidthPerHeight)) throw new Error("@unset-sh/brand has n
 
 const families = { display: firstFamily(tokens.type.families.display), mono: firstFamily(tokens.type.families.mono) };
 
+/** The brand's own font files, one for each family. src/fonts.ts adds what they lack. */
 export const fonts: BrandFont[] = [font(families.display), font(families.mono)];
 
 // The mark is drawn in the opposite tone of the ground: the Onyx mark on Platinum, the Platinum mark on Onyx.

@@ -23,6 +23,18 @@ test("joiners that emoji and some scripts need are kept", () => {
   assert.equal(clean(joined), joined);
 });
 
+test("characters with no shape of their own are dropped", () => {
+  // Zero-width space, soft hyphen, word joiner, byte order mark, the Hangul fillers, the grapheme joiner and the
+  // object placeholder.
+  const shapeless = [0x200b, 0xad, 0x2060, 0xfeff, 0x115f, 0x1160, 0x3164, 0x34f, 0xfffc];
+  for (const code of shapeless) assert.equal(clean(`mi${fromCodes(code)}ka`), "mika", code.toString(16));
+});
+
+test("text with nothing to see is empty", () => {
+  assert.equal(clean(fromCodes(0x200d, 0xfe0f, 0x200c)), "");
+  assert.equal(clean(` ${fromCodes(0x3164)} ${fromCodes(0x200d)} `), "");
+});
+
 test("half of a surrogate pair is dropped", () => {
   assert.equal(clean(`a${String.fromCharCode(0xd83d)}b`), "ab");
 });

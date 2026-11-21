@@ -91,6 +91,38 @@ test("text no bundled font can draw is refused, and none of it is printed", asyn
   assert.deepEqual(reached, []);
 });
 
+test("accented letters the brand's own files lack are drawn", async () => {
+  for (const name of ["Łukasz Żółć", "Šťastný Kůň", "İpek Yağmur", "Nguyễn Thị Hồng", "Győző Ţăranu"]) {
+    await drawn({ ...profile, name, eyebrow: name, bio: name });
+  }
+});
+
+test("display text takes symbols from the mono typeface, and nothing but symbols", async () => {
+  // Only JetBrains Mono holds these three. The first two are symbols; the interrobang is punctuation.
+  const [arrow, check, interrobang] = [0x2192, 0x2713, 0x203d].map((code) => String.fromCodePoint(code));
+  await drawn({ ...profile, name: `Mika ${arrow} Rowan ${check}`, bio: `One ${arrow} two ${check}` });
+  await drawn({ ...profile, eyebrow: `Really${interrobang}` });
+  assert.equal(await refused({ ...profile, name: `Really${interrobang}` }), "text-not-covered");
+});
+
+test("a letter with a loose accent is refused, whatever the accent", async () => {
+  // U+0300 to U+036F are the accents that go on a letter. "q" has no single character with any of them.
+  for (let code = 0x300; code <= 0x36f; code += 1) {
+    const accent = String.fromCodePoint(code);
+    if (/\p{Default_Ignorable_Code_Point}/u.test(accent)) continue;
+    assert.equal(await refused({ ...profile, name: `q${accent}` }), "text-not-covered", code.toString(16));
+    assert.equal(await refused({ ...profile, eyebrow: `q${accent}` }), "text-not-covered", code.toString(16));
+  }
+});
+
+test("characters with no shape change nothing, and a name made only of them is no name", async () => {
+  const plain = sha256(await drawn(profile));
+  const filler = String.fromCodePoint(0x3164);
+  const placeholder = String.fromCodePoint(0xfffc);
+  assert.equal(sha256(await drawn({ ...profile, name: `Mika${filler} Rowan${placeholder}` })), plain);
+  assert.equal(await refused({ ...profile, name: `${filler}${String.fromCodePoint(0x200d)}` }), "invalid-input name");
+});
+
 test("a picture that is not a picture is unreadable", async () => {
   const jpegStart = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, ...new TextEncoder().encode("not a picture at all")]);
   assert.equal(await refused(withPicture(jpegStart, "image/jpeg")), "picture-unreadable picture");

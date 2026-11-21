@@ -51,7 +51,7 @@ All candidates that were run gave the same bytes on every repeat.
 - It reads no font from the machine. `@napi-rs/canvas` falls back to whatever is installed, so an image would
   depend on the server it was drawn on.
 - It tells us which characters no font can draw, before drawing, so the toolkit can refuse instead of drawing
-  empty boxes.
+  empty boxes. That report has gaps, which "Missing letters" below lists with how each is closed.
 - It is several times faster than the next candidate, with no install script and no dependency beyond its own
   prebuilt binary (8.6 MB on Linux x64). Licence: MIT or Apache-2.0.
 
@@ -68,7 +68,10 @@ These are the reasons Takumi sits behind one file and a set of tests, and is not
   those characters with `console.warn` and draws empty boxes. The toolkit raises inside that callback, which
   stops both; a test fails if anything is printed.
 - **It has a font of its own.** With no font registered, Latin text is drawn in its bundled Geist. The toolkit
-  names the brand families for every render and checks that both registered.
+  names the families for every text and checks that each registered.
+- **It tries every font it holds.** Left alone, a text falls back to every registered family in the order they
+  were registered, so a word in Space Grotesk took a letter it lacked from JetBrains Mono. The toolkit gives each
+  text its own chain of families and passes an empty list of others.
 - **Its image cache changes pixels.** With the cache on, a picture drawn small after being drawn large reuses
   the earlier bitmap, so the same input does not always give the same bytes. The toolkit turns the cache off,
   and keys every image by the hash of its bytes.
@@ -76,6 +79,26 @@ These are the reasons Takumi sits behind one file and a set of tests, and is not
   image given as bytes inside a node is measured from its header alone (an 8000 x 8000 PNG in 3 ms, against
   420 ms to decode it), and an image given by key with the cache off is decoded when measured, and raises if it
   does not decode. `tests/render.test.ts` holds both in place, so an update that changes either fails CI.
+
+## Missing letters
+
+Found on 2026-11-21, after the trial, by drawing every character of the first two Unicode planes one at a time
+and comparing what Takumi 2.22.1 reported with what it drew. `tests/coverage.test.ts` repeats that scan on every
+run.
+
+| What Takumi does | Example | How the toolkit closes it |
+| --- | --- | --- |
+| Builds a letter the font lacks from a plain letter and a loose accent of the same font, puts the accent beside the letter, and reports nothing when any font in the chain holds the letter | "ź" drawn as "z" and "´" | Every font is loaded without its accents (U+0300 to U+036F), as a `unicode-range`. With no accent to build from, the letter comes whole from the font that holds it, or is reported |
+| Draws a loose macron or diaeresis (U+0304, U+0308) from the spacing accent, beside the letter, and reports nothing | "m" with a macron | Text with any loose accent is refused before it is drawn |
+| Draws the Hangul fillers and the object placeholder (U+115F, U+1160, U+3164, U+FFFC) as an empty box and reports nothing | | Characters with no shape of their own are removed when the text is read |
+| When one character is missing, draws some covered characters after it as empty boxes too | U+2011, then "→ ✓" | Any reported character refuses the whole image |
+
+Two characters are drawn in Space Grotesk although its character table lists neither: the double dagger and the
+per mille sign (U+2021, U+2030). Both come out as they should. Where Takumi takes them from is not explained.
+
+One more thing the scan showed is about the design sheet, not Takumi: its Space Grotesk file holds 230
+characters, the Western European letters only. `src/fonts.ts` adds the other slices of the same build, and lets
+display text take symbols, and only symbols, from JetBrains Mono.
 
 ## How it behaves on bad input
 
@@ -88,6 +111,7 @@ These are the reasons Takumi sits behind one file and a set of tests, and is not
 | An SVG that points at a remote file | Draws the SVG, no connection made | Refused earlier: only JPEG, PNG and WebP are accepted |
 | A JPEG cut off half-way | Draws the half it has, the rest grey | Drawn the same way; not caught |
 | A character no font draws | Empty box, and the character printed to the log | `text-not-covered`, nothing printed |
+| A letter and a loose accent with no single character for the pair | The accent beside the letter | `text-not-covered` |
 
 ## Not verified
 
