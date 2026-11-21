@@ -13,8 +13,8 @@ preview images and embeds of profiles, posts and articles, rendered from supplie
   request (the app calls this package).
 - **Uses:** `unset-sh/brand` as `@unset-sh/brand` at an exact version. **Used by:** `Undefined6799/unset`, after its
   rewrite.
-- **Licence:** everything written for unset.sh is AGPL-3.0-only; work we use from others keeps its own licence. No
-  licence file yet.
+- **Licence:** AGPL-3.0-only (no licence file yet). Work we use from others keeps its own licence.
+- **Outside contributions:** none for now; do not merge a pull request from outside the organisation.
 
 The map of every unset.sh repository is <https://github.com/unset-sh/.github/blob/main/MAP.md>. Read it before
 moving work between repositories or starting work that might belong elsewhere.
