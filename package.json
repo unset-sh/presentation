@@ -1,0 +1,45 @@
+{
+  "name": "@unset-sh/presentation",
+  "version": "0.1.0",
+  "description": "Renders unset.sh preview images for profiles, posts and articles from supplied data.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unset-sh/presentation.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "node scripts/clean.ts dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "biome check",
+    "test": "node --test \"src/**/*.test.ts\" \"tests/*.test.ts\"",
+    "check": "npm run typecheck && npm run lint && npm run build && npm test",
+    "gallery": "node gallery/build.ts",
+    "gallery:update": "node gallery/build.ts --update"
+  },
+  "dependencies": {
+    "@takumi-rs/core": "2.22.1",
+    "@unset-sh/brand": "github:unset-sh/brand#6f1d3efa48c7d5b384201c1c10af1c8349254a4c"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "26.6.5",
+    "typescript": "7.0.2"
+  }
+}

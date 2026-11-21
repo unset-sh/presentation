@@ -1,0 +1,95 @@
+name: release
+
+# A release is a tag v<version> on a commit of main. The package is built and packed once, in `pack`; `publish`
+# waits for approval on the `release` environment and then signs and publishes that same file.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  pack:
+    name: Check, build and pack
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: The tag is the package version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: test "$TAG" = "v$(node -p 'require("./package.json").version')"
+      - name: The tagged commit is on main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+      - name: Every dependency is a released, exact version
+        run: |
+          node -e '
+            const { dependencies } = require("./package.json");
+            const loose = Object.entries(dependencies).filter(([, range]) => !/^\d+\.\d+\.\d+$/.test(range));
+            if (loose.length > 0) {
+              console.error("Not a released, exact version:", loose.map(([name, range]) => `${name} ${range}`).join(", "));
+              process.exit(1);
+            }
+          '
+      - run: npm ci
+      - run: npm run check
+      - name: Pack
+        run: |
+          mkdir packed
+          npm pack --ignore-scripts --pack-destination packed
+          sha256sum packed/*.tgz | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package
+          path: packed/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish to GitHub Packages
+    needs: pack
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: release
+    permissions:
+      contents: read
+      packages: write # publish with the workflow's own token; no stored secret
+      id-token: write # sign the attestation
+      attestations: write # store the attestation
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+          registry-url: https://npm.pkg.github.com
+          scope: "@unset-sh"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: package
+          path: packed
+      - name: Exactly one packed file
+        run: test "$(ls packed/*.tgz | wc -l)" -eq 1
+      - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: packed/*.tgz
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm publish --ignore-scripts packed/*.tgz
