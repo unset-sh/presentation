@@ -171,5 +171,9 @@ a commit instead of a released version.
 
 ## Licence
 
-MIT, see [`LICENSE`](LICENSE). The fonts and the mark it draws with keep the licences of
-[`@unset-sh/brand`](https://github.com/unset-sh/brand#licences).
+GNU Affero General Public License, version 3 only (AGPL-3.0-only), see [`LICENSE`](LICENSE). Copyright (c) 2026
+Alex (Undefined6799).
+
+The fonts and the mark it draws with are not ours to license here: the brand's fonts and mark keep the licences of
+[`@unset-sh/brand`](https://github.com/unset-sh/brand#licences), and the font packages keep the SIL Open Font
+License.

@@ -2,7 +2,7 @@
   "name": "@unset-sh/presentation",
   "version": "0.1.0",
   "description": "Renders unset.sh preview images for profiles, posts and articles from supplied data.",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/unset-sh/presentation.git"
