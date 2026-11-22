@@ -1,0 +1,47 @@
+{
+  "name": "@unset-sh/presentation",
+  "version": "0.1.0",
+  "description": "Renders unset.sh preview images for profiles, posts and articles from supplied data.",
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unset-sh/presentation.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "node scripts/clean.ts dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "biome check",
+    "test": "node --test \"src/**/*.test.ts\" \"tests/*.test.ts\"",
+    "check": "npm run typecheck && npm run lint && npm run build && npm test",
+    "gallery": "node gallery/build.ts",
+    "gallery:update": "node gallery/build.ts --update"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/space-grotesk": "5.3.0",
+    "@takumi-rs/core": "2.22.1",
+    "@unset-sh/brand": "github:unset-sh/brand#4e60b99b66effc1ba27830fa8edcf4eb3a9ac536"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "26.6.5",
+    "typescript": "7.0.2"
+  }
+}
