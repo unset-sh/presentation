@@ -170,8 +170,6 @@ a commit instead of a released version.
 - **The whole typefaces in the brand package.** The design sheet ships Space Grotesk with Western European
   letters only, so [`src/fonts.ts`](src/fonts.ts) takes the other slices of the same build from the Fontsource
   packages. They belong in `@unset-sh/brand`, and move there when the sheet ships them.
-- **The brand package from the registry.** `@unset-sh/brand` has no release yet, so it is pinned to a commit of
-  its repository. It moves to an exact released version before the first release here.
 - **The same bytes on every machine.** Drawings are compared byte for byte on Linux x64, where CI runs. Other
   machines are not checked yet.
 - **A truncated picture.** A JPEG cut off part-way still decodes, and is drawn with its missing part grey.

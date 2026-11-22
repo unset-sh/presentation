@@ -29,10 +29,8 @@ test("the package holds the built code, the licence and the readme, and no test"
 
 test("every dependency names one exact version", () => {
   const exact = /^\d+\.\d+\.\d+$/;
-  // Until @unset-sh/brand has its first release it is pinned to a commit. The release workflow refuses that pin.
-  const commit = /^github:unset-sh\/brand#[0-9a-f]{40}$/;
   for (const [name, range] of Object.entries({ ...manifest.dependencies, ...manifest.devDependencies })) {
-    assert.ok(exact.test(range) || (name === "@unset-sh/brand" && commit.test(range)), `${name} ${range}`);
+    assert.ok(exact.test(range), `${name} ${range}`);
   }
 });
 
