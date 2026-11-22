@@ -37,7 +37,7 @@
     "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@fontsource-variable/space-grotesk": "5.3.0",
     "@takumi-rs/core": "2.22.1",
-    "@unset-sh/brand": "github:unset-sh/brand#6f1d3efa48c7d5b384201c1c10af1c8349254a4c"
+    "@unset-sh/brand": "github:unset-sh/brand#4e60b99b66effc1ba27830fa8edcf4eb3a9ac536"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
