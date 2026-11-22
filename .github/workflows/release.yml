@@ -92,4 +92,4 @@ jobs:
       - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --ignore-scripts packed/*.tgz
+        run: npm publish --ignore-scripts ./packed/*.tgz
