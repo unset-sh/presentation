@@ -1,11 +1,11 @@
 {
-  "name": "@unset-sh/presentation",
+  "name": "@unset-sh/rendering",
   "version": "0.1.0",
   "description": "Renders unset.sh preview images for profiles, posts and articles from supplied data.",
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/unset-sh/presentation.git"
+    "url": "git+https://github.com/unset-sh/rendering.git"
   },
   "type": "module",
   "engines": {
