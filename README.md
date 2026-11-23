@@ -174,8 +174,11 @@ An agent may press Approve on a rendering release after that merge
 ([org-0012](https://github.com/unset-sh/agent-kit/blob/main/skills/org-decisions/records/org-0012-release-approvals-and-lexicon-drafts.md)).
 It refuses to publish a dependency that is not an exact released version.
 
-The workflow in `.github/workflows/release.yml` still starts from a `v<version>` tag and packs with npm. It
-moves to the merge trigger and to `bun pm pack` with tooling's shared release chain.
+`.github/workflows/release.yml` only calls tooling's shared release (`releases-package.yml`, pinned to a full
+commit). It starts when a raised version in `package.json` lands on `main`; there is no tag to push. A release
+needs a `## v<version>` entry in [`CHANGELOG.md`](CHANGELOG.md), which becomes its release notes, and creates the
+tag `v<version>` itself. CI (`ci.yml`) calls tooling's shared check in the same way. Change how either runs in
+`unset-sh/tooling`, not here.
 
 ## Not here yet
 
