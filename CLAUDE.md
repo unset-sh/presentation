@@ -1,10 +1,10 @@
-# CLAUDE.md: unset-sh/presentation
+# CLAUDE.md: unset-sh/rendering
 
 ## Where this repository fits
 
-This is `unset-sh/presentation`: how unset.sh looks outside the app. Templates and the one rendering path for
+This is `unset-sh/rendering`: how unset.sh looks outside the app. Templates and the one rendering path for
 preview images and embeds of profiles, posts and articles, rendered from supplied data, published as
-`@unset-sh/presentation` on GitHub Packages. No running service.
+`@unset-sh/rendering` on GitHub Packages. No running service.
 
 - **Belongs here:** templates (one owner each), rendering supplied data into images and embeds, and the gallery of
   hard cases every template must survive.

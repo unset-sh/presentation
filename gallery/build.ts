@@ -20,7 +20,7 @@ if (!update) {
   const figures = cases.map(
     ({ id }) => `<figure><img src="${id}.png" width="600" height="315" alt=""><figcaption>${id}</figcaption></figure>`,
   );
-  const page = `<!doctype html><meta charset="utf-8"><title>presentation gallery</title>
+  const page = `<!doctype html><meta charset="utf-8"><title>rendering gallery</title>
 <style>body{font:14px system-ui;margin:24px;background:Canvas;color:CanvasText;color-scheme:light dark}
 main{display:grid;grid-template-columns:repeat(auto-fill,600px);gap:24px}figure{margin:0}img{display:block;border:1px solid GrayText}</style>
 <main>${figures.join("\n")}</main>\n`;

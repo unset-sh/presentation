@@ -1,4 +1,4 @@
-# unset.sh presentation
+# unset.sh rendering
 
 How [unset.sh](https://unset.sh) looks outside the app. This repository holds the templates and the renderer for
 everything Unset shows on other people's screens: today the preview image a link gets when it is shared, later
@@ -8,7 +8,7 @@ The line it draws is simple: **the app decides what is shown, this toolkit decid
 over plain data it has already decided is public. The toolkit gives back an image. It never fetches, never looks
 anything up and has no opinion on who may see what.
 
-It is published as the package `@unset-sh/presentation`. Its colours, fonts and mark come from
+It is published as the package `@unset-sh/rendering`. Its colours, fonts and mark come from
 [`@unset-sh/brand`](https://github.com/unset-sh/brand) at one exact version, and from nowhere else.
 
 ## What belongs here
@@ -47,11 +47,11 @@ Installing from GitHub Packages needs a read-only token; [brand's README](https:
 has the steps. Then install an exact version:
 
 ```sh
-npm install --save-exact @unset-sh/presentation
+npm install --save-exact @unset-sh/rendering
 ```
 
 ```ts
-import { renderPreview, version } from "@unset-sh/presentation";
+import { renderPreview, version } from "@unset-sh/rendering";
 
 const result = await renderPreview({
   kind: "profile",

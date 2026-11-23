@@ -1,4 +1,4 @@
-// @unset-sh/presentation: supplied data in, a preview image out. This is the only public entry.
+// @unset-sh/rendering: supplied data in, a preview image out. This is the only public entry.
 
 import { readFileSync } from "node:fs";
 import { HEIGHT, LIMITS, WIDTH } from "./contract/limits.ts";
