@@ -1,0 +1,29 @@
+[install]
+# Write exact versions, never ranges.
+exact = true
+# No dependency lifecycle scripts, locally or in CI.
+ignoreScripts = true
+# Resolve only versions published at least 7 days ago, so a hijacked release has time to be caught before it
+# reaches us. Our own packages are exempt; Bun takes exact package names here, not scope patterns.
+minimumReleaseAge = 604800 # seconds
+minimumReleaseAgeExcludes = [
+  "@unset-sh/brand",
+  # One-off exception, approved by Alex on 2026-11-21: @takumi-rs/core 2.22.1 (published 2026-11-20) is the
+  # first release line that reports text no font can draw. Only that exact version is exempt. Remove these
+  # lines on or after 2026-11-28.
+  "@takumi-rs/core@2.22.1",
+  "@takumi-rs/core-darwin-arm64@2.22.1",
+  "@takumi-rs/core-darwin-x64@2.22.1",
+  "@takumi-rs/core-linux-arm64-gnu@2.22.1",
+  "@takumi-rs/core-linux-arm64-musl@2.22.1",
+  "@takumi-rs/core-linux-x64-gnu@2.22.1",
+  "@takumi-rs/core-linux-x64-musl@2.22.1",
+  "@takumi-rs/core-win32-arm64-msvc@2.22.1",
+  "@takumi-rs/core-win32-x64-msvc@2.22.1",
+  "@takumi-rs/helpers@2.22.1",
+]
+
+[install.scopes]
+# @unset-sh packages come from GitHub Packages, which needs a token even to read: GITHUB_TOKEN with
+# packages: read in CI, a read:packages token elsewhere.
+"@unset-sh" = { url = "https://npm.pkg.github.com", token = "$NPM_CONFIG_TOKEN" }

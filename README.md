@@ -32,22 +32,30 @@ A planned surface gets its folder when its first template is written, not before
 
 | It is | It lives in | Why |
 | --- | --- | --- |
-| A fixed asset: the logo, icons, fonts, colours, official avatars and banners, press kit, print artwork | [`unset-sh/brand`](https://github.com/unset-sh/brand) | Brand files are copied from the design sheet and never drawn from data |
-| A decision about what may be shown, to whom, or for how long | The app | Visibility, blocking, removal and caching need the app's data and its rules |
-| An address, a route or a served file: the image URL, the embed endpoint, link-card tags in a page | The app | The toolkit is a library and serves nothing |
-| What search engines and feed readers read: page titles, structured data, sitemaps, RSS | The app | It is data, with no look to design |
+| A fixed asset: the logo, icons, fonts, colours, official avatars and banners, press kit, print artwork | [`unset-sh/brand`](https://github.com/unset-sh/brand) | Brand files are never drawn from data |
+| A decision about what may be shown, to whom, or for how long | [`unset-sh/backend`](https://github.com/unset-sh/backend) | Visibility, blocking, removal and caching need the app's data and its rules |
+| An address, a route or a served file: the image URL, the embed endpoint, link-card tags in a page | [`unset-sh/web`](https://github.com/unset-sh/web), with backend | The toolkit is a library and serves nothing |
+| What search engines and feed readers read: page titles, structured data, sitemaps, RSS | [`unset-sh/web`](https://github.com/unset-sh/web) | It is data, with no look to design |
 | Anything that fetches, stores or logs | Nowhere in this repository | See [What it promises](#what-it-promises) |
 
 If a new idea is drawn from data and seen outside the app, it goes here. If it is a file that never changes with
-the data, it goes in brand. Everything else stays in the app.
+the data, it goes in brand. Everything else stays in the app: backend and web.
 
 ## Use it
 
-Installing from GitHub Packages needs a read-only token; [brand's README](https://github.com/unset-sh/brand#use-it)
-has the steps. Then install an exact version:
+Installing from GitHub Packages needs a read-only token, even to read. Point the `@unset-sh` scope at GitHub
+Packages in the consumer's `bunfig.toml` and give the token through an environment variable, as this repository
+does for brand:
+
+```toml
+[install.scopes]
+"@unset-sh" = { url = "https://npm.pkg.github.com", token = "$NPM_CONFIG_TOKEN" }
+```
+
+Then install an exact version:
 
 ```sh
-npm install --save-exact @unset-sh/rendering
+bun add --exact @unset-sh/rendering
 ```
 
 ```ts
@@ -115,8 +123,8 @@ the least possible, far too much text, one unbroken word. All of it is invented.
 to the brand package or to the renderer shows up in the pull request as changed pictures.
 
 ```sh
-npm run gallery          # draws every case into gallery/out/, with index.html to look at them
-npm run gallery:update   # records the drawings as the new expected ones, on purpose
+bun run gallery          # draws every case into gallery/out/, with index.html to look at them
+bun run gallery:update   # records the drawings as the new expected ones, on purpose
 ```
 
 | | |
@@ -141,7 +149,8 @@ A template turns checked input and one theme's colours into a tree of boxes, tex
 about the renderer. [`render.ts`](src/render.ts) draws that tree with [Takumi](https://takumi.kane.tw);
 [`docs/renderer-trial.md`](docs/renderer-trial.md) says why Takumi, with the numbers.
 
-`npm run check` runs the type check, the linter, the build and the tests. Among the tests,
+`bun run check` runs the type check, the linter, the build, the tests and the check of the agent-kit copy in
+`.claude/`. Among the tests,
 [`tests/boundaries.test.ts`](tests/boundaries.test.ts) holds the structure in place: only `render.ts` imports
 the renderer, only `brand.ts` reads the brand package, only `fonts.ts` reads a font package, and no colour is
 written anywhere in the source. [`tests/coverage.test.ts`](tests/coverage.test.ts) draws every character one at
@@ -153,15 +162,20 @@ a time and fails if one is drawn as an empty box without being reported.
    text field.
 2. Write the template in `src/templates/`, using only `frame.ts`, the tree and the colours it is given.
 3. Add its cases to `gallery/cases.ts`: the designed one, the least, the longest.
-4. Run `npm run gallery`, look at the drawings, then `npm run gallery:update`.
+4. Run `bun run gallery`, look at the drawings, then `bun run gallery:update`.
 5. Open a pull request. One template per pull request.
 
 ## Releases
 
-A release is a tag `v<version>` on a commit of `main`. The release workflow checks the tag against
-`package.json`, runs the checks, packs the package once, and then waits. Alex approves it in GitHub, and only
-then is that same packed file signed and published. It refuses to publish while `@unset-sh/brand` is pinned to
-a commit instead of a released version.
+Work lands on `staging`. A release is Alex's merge of `staging` into `main`: after it, the release workflow
+checks, packs the package once, and signs and publishes that same file to GitHub Packages
+([org-0010](https://github.com/unset-sh/agent-kit/blob/main/skills/org-decisions/records/org-0010-staged-delivery-on-main.md)).
+An agent may press Approve on a rendering release after that merge
+([org-0012](https://github.com/unset-sh/agent-kit/blob/main/skills/org-decisions/records/org-0012-release-approvals-and-lexicon-drafts.md)).
+It refuses to publish a dependency that is not an exact released version.
+
+The workflow in `.github/workflows/release.yml` still starts from a `v<version>` tag and packs with npm. It
+moves to the merge trigger and to `bun pm pack` with tooling's shared release chain.
 
 ## Not here yet
 
@@ -170,6 +184,9 @@ a commit instead of a released version.
 - **The whole typefaces in the brand package.** The design sheet ships Space Grotesk with Western European
   letters only, so [`src/fonts.ts`](src/fonts.ts) takes the other slices of the same build from the Fontsource
   packages. They belong in `@unset-sh/brand`, and move there when the sheet ships them.
+- **The current brand contract.** `@unset-sh/brand` is taken at 0.1.0, the release of the design-sheet files
+  this toolkit was drawn against. Brand 0.1.1 replaced them with a new contract (new token names, a Graphite
+  palette with no plum). Moving to it changes every drawing, so it is its own reviewed pull request.
 - **The same bytes on every machine.** Drawings are compared byte for byte on Linux x64, where CI runs. Other
   machines are not checked yet.
 - **A truncated picture.** A JPEG cut off part-way still decodes, and is drawn with its missing part grey.
