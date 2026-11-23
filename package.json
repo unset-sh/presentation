@@ -8,9 +8,6 @@
     "url": "git+https://github.com/unset-sh/rendering.git"
   },
   "type": "module",
-  "engines": {
-    "node": ">=22.18"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -25,19 +22,19 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "build": "node scripts/clean.ts dist && tsc -p tsconfig.build.json",
+    "build": "bun scripts/clean.ts dist && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "biome check",
-    "test": "node --test \"src/**/*.test.ts\" \"tests/*.test.ts\"",
-    "check": "npm run typecheck && npm run lint && npm run build && npm test",
-    "gallery": "node gallery/build.ts",
-    "gallery:update": "node gallery/build.ts --update"
+    "test": "bun test",
+    "check": "bun run typecheck && bun run lint && bun run build && bun run test && bun .claude/agent-kit/sync.mjs --check",
+    "gallery": "bun gallery/build.ts",
+    "gallery:update": "bun gallery/build.ts --update"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@fontsource-variable/space-grotesk": "5.3.0",
     "@takumi-rs/core": "2.22.1",
-    "@unset-sh/brand": "github:unset-sh/brand#4e60b99b66effc1ba27830fa8edcf4eb3a9ac536"
+    "@unset-sh/brand": "0.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

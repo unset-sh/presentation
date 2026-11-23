@@ -2,7 +2,9 @@
 
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { basename, join } from "node:path";
 import { test } from "node:test";
 import { cases } from "../gallery/cases.ts";
 import { renderPreview } from "../src/index.ts";
@@ -14,25 +16,38 @@ const manifest = JSON.parse(readFileSync(new URL("package.json", root), "utf8"))
 };
 
 test("the package holds the built code, the licence and the readme, and no test", () => {
-  const [packed] = JSON.parse(
-    execFileSync("npm", ["pack", "--dry-run", "--json", "--ignore-scripts"], { cwd: root, encoding: "utf8" }),
-  ) as [{ files: { path: string }[] }];
-  const paths = packed.files.map((file) => file.path);
-  const outside = paths.filter((path) => !path.startsWith("dist/")).sort();
-  assert.deepEqual(outside, ["LICENSE", "README.md", "package.json"]);
-  assert.ok(paths.includes("dist/index.js") && paths.includes("dist/index.d.ts"));
-  assert.deepEqual(
-    paths.filter((path) => path.includes(".test.")),
-    [],
-  );
+  // Pack for real into a scratch folder and list the archive, so the test reads what would be published.
+  const folder = mkdtempSync(join(tmpdir(), "rendering-pack-"));
+  try {
+    const name = execFileSync("bun", ["pm", "pack", "--ignore-scripts", "--quiet", "--destination", folder], {
+      cwd: root,
+      encoding: "utf8",
+    })
+      .trim()
+      .split("\n")
+      .at(-1);
+    assert.ok(name, "bun pm pack named no archive");
+    const listing = execFileSync("tar", ["-tzf", join(folder, basename(name))], { encoding: "utf8" });
+    const paths = listing
+      .split("\n")
+      .filter((line) => line.length > 0)
+      .map((line) => line.replace(/^package\//, ""));
+    const outside = paths.filter((path) => !path.startsWith("dist/")).sort();
+    assert.deepEqual(outside, ["LICENSE", "README.md", "package.json"]);
+    assert.ok(paths.includes("dist/index.js") && paths.includes("dist/index.d.ts"));
+    assert.deepEqual(
+      paths.filter((path) => path.includes(".test.")),
+      [],
+    );
+  } finally {
+    rmSync(folder, { recursive: true, force: true });
+  }
 });
 
 test("every dependency names one exact version", () => {
   const exact = /^\d+\.\d+\.\d+$/;
-  // Until @unset-sh/brand has its first release it is pinned to a commit. The release workflow refuses that pin.
-  const commit = /^github:unset-sh\/brand#[0-9a-f]{40}$/;
   for (const [name, range] of Object.entries({ ...manifest.dependencies, ...manifest.devDependencies })) {
-    assert.ok(exact.test(range) || (name === "@unset-sh/brand" && commit.test(range)), `${name} ${range}`);
+    assert.ok(exact.test(range), `${name} ${range}`);
   }
 });
 
