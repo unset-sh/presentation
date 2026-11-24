@@ -21,7 +21,7 @@ jobs:
   check:
     # A distinct name, so this run does not duplicate ci.yml's required status.
     name: Check before export
-    uses: unset-sh/tooling/.github/workflows/ci-check.yml@37ea5787ba7ecbfc9c910be7a8762a58479f2dc5
+    uses: unset-sh/tooling/.github/workflows/ci-check.yml@cbc0732281b48db638da554fe163d156e64f9066
     permissions:
       contents: read
       packages: read # the install step reads @unset-sh/brand from GitHub Packages
@@ -30,6 +30,6 @@ jobs:
 
   export:
     needs: check
-    uses: unset-sh/tooling/.github/workflows/automation-docs-export.yml@37ea5787ba7ecbfc9c910be7a8762a58479f2dc5
+    uses: unset-sh/tooling/.github/workflows/automation-docs-export.yml@cbc0732281b48db638da554fe163d156e64f9066
     permissions:
       contents: read
