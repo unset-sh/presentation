@@ -25,5 +25,6 @@ minimumReleaseAgeExcludes = [
 
 [install.scopes]
 # @unset-sh packages come from GitHub Packages, which needs a token even to read: GITHUB_TOKEN with
-# packages: read in CI, a read:packages token elsewhere.
-"@unset-sh" = { url = "https://npm.pkg.github.com", token = "$NPM_CONFIG_TOKEN" }
+# packages: read in CI, a read:packages token elsewhere, always as GITHUB_PACKAGES_TOKEN. Never NPM_CONFIG_TOKEN:
+# Bun also sends that one to the default registry (Bun 1.4.4 docs/pm/npmrc.mdx), so it would reach npmjs.org.
+"@unset-sh" = { url = "https://npm.pkg.github.com", token = "$GITHUB_PACKAGES_TOKEN" }

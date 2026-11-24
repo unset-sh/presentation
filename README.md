@@ -44,12 +44,13 @@ the data, it goes in brand. Everything else stays in the app: backend and web.
 ## Use it
 
 Installing from GitHub Packages needs a read-only token, even to read. Point the `@unset-sh` scope at GitHub
-Packages in the consumer's `bunfig.toml` and give the token through an environment variable, as this repository
-does for brand:
+Packages in the consumer's `bunfig.toml` and give the token through `GITHUB_PACKAGES_TOKEN`, as this repository
+does for brand. Do not use `NPM_CONFIG_TOKEN`: Bun also sends it to the default registry, so the token would reach
+registry.npmjs.org (Bun 1.4.4 `docs/pm/npmrc.mdx`).
 
 ```toml
 [install.scopes]
-"@unset-sh" = { url = "https://npm.pkg.github.com", token = "$NPM_CONFIG_TOKEN" }
+"@unset-sh" = { url = "https://npm.pkg.github.com", token = "$GITHUB_PACKAGES_TOKEN" }
 ```
 
 Then install an exact version:

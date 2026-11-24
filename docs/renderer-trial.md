@@ -61,7 +61,7 @@ These are the reasons Takumi sits behind one file and a set of tests, and is not
 
 - **It is young and moves fast.** One maintainer, seven releases in the four weeks before this trial. The call
   that reports uncovered characters (`loadFallbackFonts`) first shipped on 2026-11-20, the day before. 2.22.1
-  was taken one day old, with Alex's approval, as a dated exception to the 7-day wait in [`.npmrc`](../.npmrc).
+  was taken one day old, with Alex's approval, as a dated exception to the 7-day wait in [`bunfig.toml`](../bunfig.toml).
 - **Its wrapper can fetch.** Given an address as an image or a font, it downloads it. The toolkit only ever
   gives it bytes, the contract has no field for an address, and a test replaces `fetch` and fails if it is called.
 - **It prints the text it cannot draw.** Without `loadFallbackFonts`, a render with an uncovered character logs
